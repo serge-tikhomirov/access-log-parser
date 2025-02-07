@@ -12,27 +12,7 @@ public class Main {
         File    file_ForCheck;           //интерфейс к атрибутам файла, для проверки
         int     int_ColFile = 0;         //количество верно указанных путей к файлам
         // конец  декларации локальных переменных метода
-/*
-●     Выполняйте задание в том же проекте AccessLogParser в ветке master.
 
-●     После проверки существования файла и того, что указанный путь является путём именно к файлу, а не к папке, напишите код, который будет построчно читать указанный файл:
-
-FileReader fileReader = new FileReader(path);
-BufferedReader reader =
-   new BufferedReader(fileReader);
-String line;
-while ((line = reader.readLine()) != null) {
-   int length = line.length();
-}
-●     Поскольку в данном коде есть целых два места, требующих обязательной обработки исключений,
-поместите этот код внутрь конструкции try…catch, внутри которой пропишите обработку всех исключений:
-
-try {
-   // code here
-} catch (Exception ex) {
-   ex.printStackTrace();
-}
- */
 
         while (true){ //TODO бесконечный цикл без возможности штатного завершения программы (требуется заданием)
             System.out.println("Введите путь к файлу и нажмите <Enter>:  ");
@@ -62,9 +42,12 @@ try {
                     BufferedReader reader =
                             new BufferedReader(fileReader);
                     String text_Line;
+                    String text_Fragment="";
                     int colLinesOfFile = 0;
                     int maxLengthOfLine = 0;
                     int minLengthOfLine = Integer.MAX_VALUE;
+                    int colGooglebot=0;
+                    int colYandexbot=0;
                     while ((text_Line = reader.readLine()) != null) {
                         int length = text_Line.length();
                         colLinesOfFile++;
@@ -77,10 +60,24 @@ try {
                         if(length > 1024){
                             throw new OperationAttemptException("В файле встретилась строка длиннее 1024 символов");
                         }
+                        String[] text_Part_c = text_Line.split("\\(");
+                        if (text_Part_c.length > 1){
+                            String[] text_Part_i = text_Part_c[1].split(";");
+                            if (text_Part_i.length > 1){
+                                text_Fragment=text_Part_i[1].split("/")[0].trim();
+                            }
+                        }
+                        if(text_Fragment.equals("Googlebot")){
+                            colGooglebot++;
+                        }
+                        if(text_Fragment.equals("YandexBot")){
+                            colYandexbot++;
+                        }
+
                     }
-                    System.out.println("Общее количество строк в файле = "+colLinesOfFile);
-                    System.out.println("Длина самой длинной строки в файле = "+maxLengthOfLine);
-                    System.out.println("Длина самой короткой строки в файле = "+minLengthOfLine);
+                    System.out.println("Общее количество запросов 100%  ("+colLinesOfFile+")");
+                    System.out.println("Доля запросов Googlebot "+(double)colGooglebot/colLinesOfFile*100+ " %  (" +colGooglebot+")");
+                    System.out.println("Доля запросов YandexBot "+(double)colYandexbot/colLinesOfFile*100+ " %  (" +colYandexbot+")");
                 } catch (Exception ex){
                     ex.printStackTrace();
                 }
