@@ -1,6 +1,6 @@
 import java.util.regex.Pattern;
 
-public enum SwitchRegul {//формат - логический контроль (примитивный из-за нехватки времени) //
+public enum FormatLogicControl {//формат - логический контроль (заготовка) //
 
 
     IPADRESS(1){// 72.118.143.231
@@ -36,7 +36,7 @@ public enum SwitchRegul {//формат - логический контроль 
     },
     REFERER(4){// пустая строка или типа: https://www.nova-news.ru//cooking/?rss=1&p=53&lg=1
         public boolean isValid(String str){
-            //TODO REFERER - вообще примитив нужно переделывать
+            //TODO REFERER - только база
             Pattern pattern = Pattern.compile("(http.*)|-");
             if (str.isBlank()) {
                 return true;
@@ -64,7 +64,7 @@ public enum SwitchRegul {//формат - логический контроль 
         }
     };
         int i;
-        private SwitchRegul(int i){
+        private FormatLogicControl(int i){
             this.i=i;
         }
         public boolean isValid(String str){

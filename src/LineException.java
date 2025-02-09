@@ -1,5 +1,6 @@
-public class OperationAttemptException extends RuntimeException {
-  public OperationAttemptException(String message) {
+public class LineException extends RuntimeException {
+  public LineException(String message) {
     super(message);
+
   }
 }

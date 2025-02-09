@@ -1,4 +1,8 @@
-package PACKAGE_NAME;
-
 public enum Metod {
+    GET,
+    PUT,
+    POST,
+    DELETE,
+    HEAD,
+    NULL //маркер ошибки
 }
