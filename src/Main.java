@@ -24,7 +24,7 @@ public class Main {
             statistics=new Statistics();
             System.out.println("Введите путь к файлу и нажмите <Enter>:  ");
             text_PathOfFile  = new Scanner(System.in).nextLine();
-            //text_PathOfFile = "C:\\Users\\stikhomirov\\access.log"; //строка для отладки кода, чтоб постоянно не вбивать путь
+            text_PathOfFile = "C:\\Users\\stikhomirov\\access.log"; //строка для отладки кода, чтоб постоянно не вбивать путь
             file_ForCheck    = new File(text_PathOfFile);
             flag_PathExist   = file_ForCheck.exists();
             flag_IsDirectory = file_ForCheck.isDirectory();
@@ -113,6 +113,7 @@ public class Main {
                     System.out.println("Доля запросов Googlebot "+(double)colGooglebot/colLinesOfFile*100+ " %  (" +colGooglebot+")");
                     System.out.println("Доля запросов YandexBot "+(double)colYandexbot/colLinesOfFile*100+ " %  (" +colYandexbot+")");
                     System.out.println("Статистика :"+ statistics.toString());
+
 
                 } catch (Exception ex){
                     ex.printStackTrace();

@@ -13,18 +13,10 @@ public class UserAgent {
 
     }
     public String getOperationSystem() {
-        if(Objects.equals(operationSystem, "None")){
-            return null;
-        } else {
             return operationSystem;
-        }
     }
     public String getBrowser() {
-        if(Objects.equals(browser, "None")){
-            return null;
-        } else {
             return browser;
-        }
     }
 
     @Override
@@ -49,22 +41,32 @@ public class UserAgent {
             return "None";
         }
 
-        String[] arr ={"Windows","Mac OS","Linux"};
+        String[] arr = getArrOfOS();
         for(int i=0;i<arr.length;i++){
             if(os.contains(arr[i])){
                 return arr[i];
             }
         }
-        return "Other";//Other означает, что строка есть, но из нее, по каким то причинам не выделено данное свойство
+        return "Other";//Other означает, что строка есть, но из нее, не выделено данное свойство из за отсутствия в справочнике поиска getArrOfOS()
+                       // например Android, совместимые ОС (compatible), CrOS, LINUX for TV
     }
 
     private String containsBR(String str){
-        String[] arr ={"Edge","Firefox","Chrome", "Opera"};
+        String[] arr =getArrOfBrowser();
         for(int i=0;i<arr.length;i++){
            if (CheckBrowser.valueOf(arr[i]).isValid(str)){
                return arr[i];
            }
         }
-        return "Other";//Other означает, что строка есть, но из нее, по каким то причинам не выделено данное свойство
+        return "Other";//Other означает, что строка есть, но из нее, не выделено данное свойство из за отсутствия в справочнике getArrOfBrowser()
+    }
+
+    public String[] getArrOfOS(){
+        String[] arr ={"Windows","Mac OS","Linux"}; //список операционных систем для поиска
+        return arr;
+    }
+    public String[] getArrOfBrowser(){
+        String[] arr ={"Edge","Firefox","Chrome", "Opera"}; //список браузеров для поиска синхронизируется с классом CheckBrowser
+        return arr;
     }
 }
