@@ -24,7 +24,7 @@ public class Main {
             statistics=new Statistics();
             System.out.println("Введите путь к файлу и нажмите <Enter>:  ");
             text_PathOfFile  = new Scanner(System.in).nextLine();
-            text_PathOfFile = "C:\\Users\\stikhomirov\\access.log"; //строка для отладки кода, чтоб постоянно не вбивать путь
+            //text_PathOfFile = "C:\\Users\\stikhomirov\\access.log"; //строка для отладки кода, чтоб постоянно не вбивать путь
             file_ForCheck    = new File(text_PathOfFile);
             flag_PathExist   = file_ForCheck.exists();
             flag_IsDirectory = file_ForCheck.isDirectory();
@@ -80,7 +80,9 @@ public class Main {
                         // сбор статистики
                         statistics.addEntry(logEntry);
 
-                        //TODO блок кода {определения Googlebot и YandexBot} НАЧАЛО, МЕШАЕТСЯ!!!, он должен быть в классе UserAgent
+                        //System.out.println(logEntry.getUserAgentObj().toString());
+
+                        //TODO блок кода {определения Googlebot и YandexBot} НАЧАЛО, МЕШАЕТСЯ!!!, он должен быть в классе UserAgent (добавлено )
                         //TODO есть недочет: В логе есть два типа GoogleBot - десктоп и мобильный
                         //Mozilla/5.0 (compatible; Googlebot/2.1; +www.google.com)
                         //и
