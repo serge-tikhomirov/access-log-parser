@@ -79,8 +79,11 @@ public class UserAgent {
                 return arr[i];
             }
         }
+        if (os.contains("compatible")){
+            return "None";
+        }
         return "Other";//Other означает, что строка есть, но из нее, не выделено данное свойство из за отсутствия в справочнике поиска getArrOfOS()
-                       // например Android, совместимые ОС (compatible), CrOS, LINUX for TV
+                       // например Android, CrOS, LINUX for TV
     }
 
     private String containsBR(String str){
@@ -95,8 +98,8 @@ public class UserAgent {
     private String nameBot_Crawler(String userAgent) {
         String[] text_Part = userAgent.split("compatible;");
         if (text_Part.length > 1){
-            if (text_Part[1].contains("http")){
-                return text_Part[1].split(";")[0].trim();
+            if (text_Part[1].contains("http")) {
+                return text_Part[1].split("\\+")[0].split(";")[0].split("/")[0].trim();
             } else {
                 return "None";
             }

@@ -24,7 +24,7 @@ public class Main {
             statistics=new Statistics();
             System.out.println("Введите путь к файлу и нажмите <Enter>:  ");
             text_PathOfFile  = new Scanner(System.in).nextLine();
-            //text_PathOfFile = "C:\\Users\\stikhomirov\\access.log"; //строка для отладки кода, чтоб постоянно не вбивать путь
+           // text_PathOfFile = "C:\\Users\\stikhomirov\\access.log"; //строка для отладки кода, чтоб постоянно не вбивать путь
             file_ForCheck    = new File(text_PathOfFile);
             flag_PathExist   = file_ForCheck.exists();
             flag_IsDirectory = file_ForCheck.isDirectory();
@@ -51,12 +51,9 @@ public class Main {
                     BufferedReader reader =
                             new BufferedReader(fileReader);
                     String text_Line;
-                    String text_Fragment="";
                     int colLinesOfFile = 0;
                     int maxLengthOfLine = 0;
                     int minLengthOfLine = Integer.MAX_VALUE;
-                    int colGooglebot=0;
-                    int colYandexbot=0;
                     while ((text_Line = reader.readLine()) != null) {
                         int length = text_Line.length();
                         colLinesOfFile++;
@@ -82,39 +79,11 @@ public class Main {
 
                         //System.out.println(logEntry.getUserAgentObj().toString());
 
-                        //TODO блок кода {определения Googlebot и YandexBot} НАЧАЛО, МЕШАЕТСЯ!!!, он должен быть в классе UserAgent (добавлено )
-                        //TODO есть недочет: В логе есть два типа GoogleBot - десктоп и мобильный
-                        //Mozilla/5.0 (compatible; Googlebot/2.1; +www.google.com)
-                        //и
-                        //Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.5195.125 Mobile Safari/537.36 (compatible; Googlebot/2.1; +www.google.com)
-                        //
-                        //В задании описан подход находящий только первый из них.
-                        String[] text_Part_c = text_Line.split("\\(");
-                        if (text_Part_c.length > 1){
-                            String[] text_Part_i = text_Part_c[1].split(";");
-                            if (text_Part_i.length > 1){
-                                text_Fragment=text_Part_i[1].split("/")[0].trim();
-                            } else{
-                                continue;
-                            }
-                        }
-                        else{
-                            continue;
-                        }
-
-                        if(text_Fragment.equals("Googlebot")){
-                            colGooglebot++;
-                        }
-                        if(text_Fragment.equals("YandexBot")){
-                            colYandexbot++;
-                        }
-                        //TODO блок кода {определения Googlebot и YandexBot} КОНЕЦ
 
                     }
-                    System.out.println("Общее количество запросов 100%  ("+colLinesOfFile+")");
-                    System.out.println("Доля запросов Googlebot "+(double)colGooglebot/colLinesOfFile*100+ " %  (" +colGooglebot+")");
-                    System.out.println("Доля запросов YandexBot "+(double)colYandexbot/colLinesOfFile*100+ " %  (" +colYandexbot+")");
-                    System.out.println("Статистика :"+ statistics.toString());
+                    System.out.println("Общее количество запросов  ("+colLinesOfFile+")");
+
+                    System.out.println( statistics.toString());
 
 
                 } catch (Exception ex){

@@ -4,6 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Statistics {
     private long totalTraffic;
@@ -13,14 +14,20 @@ public class Statistics {
     private long wrongResponse;
     private HashMap<String, Integer>  userSessionCounterMap;
     private HashSet<String> siteExistSet;
+    private HashSet<String> siteNonExistentSet;
     private HashMap<String, Integer>  operatingSystemsFrequencyOccurrenceMap;
+    private HashMap<String, Integer>  browsersFrequencyOccurrenceMap;
+    private HashMap<String, Integer>  bot_crawlerFrequencyOccurrenceMap;
     private UserAgent lastUserAgent;
     public Statistics() {
         totalTraffic=0;
         usersSessionCounter =0;
         wrongResponse=0;
         siteExistSet = new HashSet<>();
+        siteNonExistentSet = new HashSet<>();
         userSessionCounterMap = new HashMap<>();
+        browsersFrequencyOccurrenceMap = new HashMap<>();
+        bot_crawlerFrequencyOccurrenceMap = new HashMap<>();
         operatingSystemsFrequencyOccurrenceMap = new HashMap<>();
         minTime = LocalDateTime.now(); //заполняем текущей датой
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy:HH:mm:ss Z", Locale.ENGLISH);
@@ -56,13 +63,37 @@ public class Statistics {
                 siteExistSet.add(entry.getPath());
             }
 
-            if (!entry.getUserAgentObj().isBot() && !entry.getUserAgentObj().isCrawler()){
-                userSessionCounterMap.putIfAbsent(entry.getIpAdr(),0);
-                userSessionCounterMap.computeIfPresent(entry.getIpAdr(),(k,v)->v+1);
+            if(entry.getCode()==404){
+                siteNonExistentSet.add(entry.getPath());
             }
 
+            if (!entry.getUserAgentObj().isBot() && !entry.getUserAgentObj().isCrawler()){
+                userSessionCounterMap.put(
+                        entry.getIpAdr(),
+                        userSessionCounterMap.getOrDefault(entry.getIpAdr(),0)+1);
+            }
+/*
+             альтернатива добавления в Map, более явная, но больше кода
             operatingSystemsFrequencyOccurrenceMap.putIfAbsent(entry.getUserAgentObj().getOperationSystem(),0);
             operatingSystemsFrequencyOccurrenceMap.computeIfPresent(entry.getUserAgentObj().getOperationSystem(),(k,v)->v+1);
+*/
+            if (!Objects.equals(entry.getUserAgentObj().getOperationSystem(), "None")){
+                operatingSystemsFrequencyOccurrenceMap.put(
+                        entry.getUserAgentObj().getOperationSystem(),
+                        operatingSystemsFrequencyOccurrenceMap.getOrDefault(entry.getUserAgentObj().getOperationSystem(),0)+1);
+            }
+
+            if (!Objects.equals(entry.getUserAgentObj().getBrowser(), "None")){
+                browsersFrequencyOccurrenceMap.put(
+                        entry.getUserAgentObj().getBrowser(),
+                        browsersFrequencyOccurrenceMap.getOrDefault(entry.getUserAgentObj().getBrowser(),0)+1);
+            }
+
+            if (!Objects.equals(entry.getUserAgentObj().getNameBotOrCrawler(), "None")){
+                bot_crawlerFrequencyOccurrenceMap.put(
+                        entry.getUserAgentObj().getNameBotOrCrawler(),
+                        bot_crawlerFrequencyOccurrenceMap.getOrDefault(entry.getUserAgentObj().getNameBotOrCrawler(),0)+1);
+            }
 
             return true;
         } else {
@@ -83,29 +114,18 @@ public class Statistics {
     public HashSet<String> getSiteExistSet(){
         return (HashSet<String>) siteExistSet.clone();
     }
+    public HashSet<String> getSiteNonExistentSet(){
+        return (HashSet<String>) siteNonExistentSet.clone();
+    }
 
     public HashMap<String,Double> getOperatingSystemsStatisticMap(){
-        int[] freqVal = new int[lastUserAgent.getArrOfOS().length];
-        int sum = 0;
-        HashMap<String,Double> statist = new HashMap<>();
-
-        for(int i=0; i<lastUserAgent.getArrOfOS().length; i++){
-            if (operatingSystemsFrequencyOccurrenceMap.get(lastUserAgent.getArrOfOS()[i])==null){
-                freqVal[i] = 0;
-            }
-            else {
-                freqVal[i] = operatingSystemsFrequencyOccurrenceMap.get(lastUserAgent.getArrOfOS()[i]);
-            }
-            sum+=freqVal[i];
-        }
-        for(int i=0; i<lastUserAgent.getArrOfOS().length; i++){
-            Double tmp = (double) freqVal[i] / sum;
-            statist.putIfAbsent(lastUserAgent.getArrOfOS()[i], (tmp) );
-        }
-        return statist;
-    }
-    public String toStringOSFrequencyOccurrenceMap(){
-        return operatingSystemsFrequencyOccurrenceMap.toString();
+        return calculatingHashMapStatist(operatingSystemsFrequencyOccurrenceMap);
+     }
+    public HashMap<String,Double> getBrowsersStatisticMap(){
+        return calculatingHashMapStatist(browsersFrequencyOccurrenceMap);
+     }
+    public HashMap<String,Double> getBotcrawlerStatisticMap(){
+        return calculatingHashMapStatist(bot_crawlerFrequencyOccurrenceMap);
     }
 
     public long calculatingAverageNumberSiteVisits(){
@@ -130,11 +150,13 @@ public class Statistics {
                 "  totalTraffic=" + totalTraffic +
                 ", minTime=" + minTime +
                 ", maxTime=" + maxTime +
-                ", trafficRate=" + getTrafficRate() +"\n"+
+                ", trafficRate=" + getTrafficRate() +" B/h\n"+
                 ", statistic OperatingSystems= " + getOperatingSystemsStatisticMap().toString() +"\n"+
-                ", calculating Average Number Site Visits=" + calculatingAverageNumberSiteVisits() +"\n"+
-                ", calculating Average Number Err Requests=" + calculatingAverageNumberErrRequests() +"\n"+
-                ", calculating Average Attendance 1User=" + calculatingAverageAttendance1User() +"\n"+
+                ", statistic Browsers        = " + getBrowsersStatisticMap().toString() +"\n"+
+                ", statistic Bots & Crawlers        = " + getBotcrawlerStatisticMap().toString() +"\n"+
+                ", calculating Average Number Site Visits=" + calculatingAverageNumberSiteVisits() +" per h.\n"+
+                ", calculating Average Number Err Requests=" + calculatingAverageNumberErrRequests() +" per h.\n"+
+                ", calculating Average Attendance 1User=" + calculatingAverageAttendance1User() +" \n"+
                 '}';
     }
 
@@ -148,6 +170,18 @@ public class Statistics {
             return 0;
         }
 
+    }
+    private HashMap<String,Double> calculatingHashMapStatist(HashMap<String, Integer> map){
+        int sum = 0;
+        HashMap<String,Double> statist = new HashMap<>();
+        for(int i=0; i<map.keySet().toArray().length; i++){
+            sum+=map.getOrDefault((String) map.keySet().toArray()[i],0);
+        }
+        for(int i=0; i<map.keySet().toArray().length; i++){
+            Double tmp = (double) map.getOrDefault((String) map.keySet().toArray()[i],0) / sum;
+            statist.put((String) map.keySet().toArray()[i], (tmp) );
+        }
+        return statist;
     }
 
 }

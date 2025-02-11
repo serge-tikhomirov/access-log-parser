@@ -15,7 +15,7 @@ public class LogEntry {
     private final UserAgent userAgentObj;
 
     public LogEntry(String str){
-        String[] strSplit = StrSplit(str);
+        String[] strSplit = splitString(str);
         if (strSplit==null){
             isError =true;
             ipAdr="";
@@ -98,18 +98,19 @@ public class LogEntry {
         }
     }
 
-    private String[] StrSplit(String str){
+    private String[] splitString(String str){
         String tmp = str;
         // переформатирование разделителей
-        tmp=tmp.replace(" - - [", "#spliterLogEntry#");   //разделение IP адреса и даты
-        tmp=tmp.replace("] \""  , "#spliterLogEntry#");   //разделение запроса и IP адреса
-        tmp=tmp.replace(" \""   , "#spliterLogEntry#");   //разделение referer и кода_длины
-        tmp=tmp.replace("\" \"" , "#spliterLogEntry#");   //разделение userAgent и referer
-        tmp=tmp.replace("\" "   , "#spliterLogEntry#");   //разделение кода_длины и запроса
-        tmp=tmp.replace("\""    , "");                    // конец строки текстового поля
+        String splitter = "#spliterLogEntry#";
+        tmp=tmp.replace(" - - [", splitter);   //разделение IP адреса и даты
+        tmp=tmp.replace("] \""  , splitter);   //разделение запроса и IP адреса
+        tmp=tmp.replace(" \""   , splitter);   //разделение referer и кода_длины
+        tmp=tmp.replace("\" \"" , splitter);   //разделение userAgent и referer
+        tmp=tmp.replace("\" "   , splitter);   //разделение кода_длины и запроса
+        tmp=tmp.replace("\""    , ""); // конец строки текстового поля
 
         // разделение по полям
-        String[] strSplit = tmp.split("#spliterLogEntry#");
+        String[] strSplit = tmp.split(splitter);
 
         // ФЛК
         if (strSplit==null || strSplit.length==0){
