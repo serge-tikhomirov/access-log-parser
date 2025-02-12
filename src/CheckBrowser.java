@@ -43,6 +43,16 @@ public enum CheckBrowser {
             }
             return pattern.matcher(str).matches();
         }
+    },
+    Safari(5){//
+        public boolean isValid(String str){
+            //Mozilla/5.0 (iPhone; CPU iPhone OS 13_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Mobile/15E148 Safari/604.1
+            Pattern pattern = Pattern.compile("Mozilla\\/....\\(.*\\).*\\(KHTML.*\\) Version\\/.*Mobile\\/.*Safari\\/.*");
+            if (str.isBlank()) {
+                return false;
+            }
+            return pattern.matcher(str).matches();
+        }
     };
     int i;
     private CheckBrowser(int i){

@@ -3,7 +3,7 @@ import java.util.Objects;
 public class UserAgent {
 
     private final String operationSystem;
-    private final String browser;
+    private String browser;
     private boolean isBot=false;
     private boolean isCrawler=false;
     private final String nameBotOrCrawler;
@@ -13,6 +13,7 @@ public class UserAgent {
         operationSystem = containsOS(userAgent);
         browser         = containsBR(userAgent);
         nameBotOrCrawler= nameBot_Crawler(userAgent);
+        collisionDetection();
         if (nameBotOrCrawler.equals("None")){
             this.isBot = false;
             this.isCrawler = false;
@@ -108,13 +109,19 @@ public class UserAgent {
             return "None";
         }
     }
+    private void collisionDetection(){//решение коллизий при определении бота, но неуверенности в наличии браузера
+        if (Objects.equals(browser, "Other") && (Objects.equals(operationSystem, "None")||Objects.equals(operationSystem, "Other")) &&!(Objects.equals(nameBotOrCrawler, "None"))){
+            browser="None";
+        }
+    }
 
     public String[] getArrOfOS(){
         String[] arr ={"Windows","Mac OS","Linux"}; //список операционных систем для поиска
         return arr;
     }
     public String[] getArrOfBrowser(){
-        String[] arr ={"Edge","Firefox","Chrome", "Opera"}; //список браузеров для поиска синхронизируется с классом CheckBrowser
+        String[] arr ={"Edge","Firefox","Chrome", "Opera", "Safari"}; //список браузеров для поиска синхронизируется с классом CheckBrowser
         return arr;
     }
+
 }
